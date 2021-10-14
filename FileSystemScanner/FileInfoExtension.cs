@@ -36,7 +36,7 @@ namespace FileSystemScanner
         {
             // create the menu strip.
             var menu = new ContextMenuStrip();
-            var topMenuItem = new ToolStripMenuItem { Text = "Scan selected files..." };
+            var topMenuItem = new ToolStripMenuItem { Text = "Scan selected files..." , Image = FileSystemScanner.Properties.Resources.menu_icon};
 
             foreach (var t in templates)
             {
