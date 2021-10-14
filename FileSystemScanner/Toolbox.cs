@@ -155,6 +155,8 @@ namespace FileSystemScanner
             var dirTemplate = parser.GetSection("DirectoryItem");
             int prevLevel = 0, dirLevelCount = 0;
 
+            string need_rename = parser.GetSetting("Format", "rename");
+
             foreach (ScanObject item in items)
             {
                 FileInfo fileInfo = item.Item as FileInfo;
@@ -186,6 +188,15 @@ namespace FileSystemScanner
                 {
                     var key = fileTypes.Keys.FirstOrDefault(k => k.Contains(fileInfo.Extension.Substring(1)));
                     if (key != null) fileType = fileTypes[key];
+                }
+
+                if (need_rename == "true")
+                {
+                    string source_folder = Path.GetDirectoryName(fileInfo.FullName);
+                    string ext = Path.GetExtension(fileInfo.FullName);
+                    string new_name = GetName();
+                    string target = Path.Combine(source_folder, new_name + ext);
+                    fileInfo.MoveTo(target);
                 }
 
                 // Do the job: just do a simple replace of variables by data
@@ -226,6 +237,18 @@ namespace FileSystemScanner
             int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
             double num = Math.Round(bytes / Math.Pow(1024, place), 1);
             return (Math.Sign(byteCount) * num).ToString() + suf[place];
+        }
+
+        static string GetName(int count=13, string parameters = "abcdefghijklnopqrstuvwxyz1234567890")
+        {
+            string result = "";
+            Random rnd = new Random();
+            int lenght = parameters.Length;
+            for (int i = 0; i < count; i++)
+            {
+                result += parameters[rnd.Next(lenght)];
+            }
+            return result;
         }
     }
 }
